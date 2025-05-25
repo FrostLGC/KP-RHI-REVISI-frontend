@@ -46,6 +46,45 @@ export const SIDE_MENU_DATA = [
   },
 ];
 
+export const SIDE_MENU_SUPERADMIN_DATA = [
+  {
+    id: "01",
+    label: "Dashboard",
+    icon: LuLayoutDashboard,
+    path: "/superadmin/dashboard",
+  },
+  {
+    id: "02",
+    label: "Manage Tasks",
+    icon: LuClipboardCheck,
+    path: "/superadmin/tasks",
+  },
+  {
+    id: "03",
+    label: "Create Tasks",
+    icon: LuSquarePlus,
+    path: "/superadmin/create-task",
+  },
+  {
+    id: "04",
+    label: "Team Members",
+    icon: LuUsers,
+    path: "/superadmin/users",
+  },
+  {
+    id: "05",
+    label: "Task Mailbox",
+    icon: LuMail,
+    path: "/superadmin/task-assignment-mailbox",
+  },
+  {
+    id: "06",
+    label: "logout",
+    icon: LuLogOut,
+    path: "logout",
+  },
+];
+
 export const SIDE_MENU_USER_DATA = [
   {
     id: "01",
@@ -64,6 +103,39 @@ export const SIDE_MENU_USER_DATA = [
     label: "Task Mailbox",
     icon: LuMail,
     path: "/user/task-assignment-mailbox",
+  },
+  {
+    id: "05",
+    label: "logout",
+    icon: LuLogOut,
+    path: "logout",
+  },
+];
+
+export const SIDE_MENU_HRD_DATA = [
+  {
+    id: "01",
+    label: "Dashboard",
+    icon: LuLayoutDashboard,
+    path: "/hrd/dashboard",
+  },
+  {
+    id: "02",
+    label: "Manage Tasks",
+    icon: LuClipboardCheck,
+    path: "/hrd/manage-tasks",
+  },
+  {
+    id: "03",
+    label: "My Tasks",
+    icon: LuClipboardCheck,
+    path: "/hrd/tasks",
+  },
+  {
+    id: "04",
+    label: "Task Mailbox",
+    icon: LuMail,
+    path: "/hrd/task-assignment-mailbox",
   },
   {
     id: "05",
