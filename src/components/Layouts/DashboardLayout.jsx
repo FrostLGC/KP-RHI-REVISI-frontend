@@ -34,6 +34,9 @@ const DashboardLayout = ({
             <div className="max-[1080px]:hidden">
               <SideMenuSortTask
                 isAdmin={user?.role === "admin"}
+                isSuperadmin={user?.role === "superadmin"}
+                isHrd={user?.role === "hrd"}
+                isMyTaskPage={activeMenu === "My Tasks"}
                 onUserSelect={onUserSelect}
                 onStatusSelect={onStatusSelect}
                 onSortChange={onSortChange}

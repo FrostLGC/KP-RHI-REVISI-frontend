@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import AuthLayout from "../../components/Layouts/AuthLayout";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/Inputs/Input";
@@ -6,7 +6,6 @@ import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATH } from "../../utils/apiPath";
 import { UserContext } from "../../context/userContext";
-import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,11 +13,9 @@ const Login = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-
-  const { updateUser } = useContext(UserContext) // Ambil fungsi updateUser dari context
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // Fungsi untuk menangani login
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -34,7 +31,6 @@ const Login = () => {
 
     setError("");
 
-    // melakukan login ke API
     try {
       const response = await axiosInstance.post(API_PATH.AUTH.LOGIN, {
         email,
@@ -45,29 +41,27 @@ const Login = () => {
 
       if (token) {
         localStorage.setItem("token", token);
-        updateUser(response.data); // Simpan token ke localStorage
+        updateUser(response.data);
 
-          if (role === "admin") {
-            navigate("/admin/dashboard"); // Ganti dengan route admin dashboard
-          } else {
-            navigate("/user/dashboard"); // Ganti dengan route user dashboard
-          };
+        if (role === "superadmin") {
+          navigate("/superadmin/dashboard");
+        } else if (role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (role === "hrd") {
+          navigate("/hrd/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
-        setError(error.response.data.message); // Tampilkan pesan error dari server
+        setError(error.response.data.message);
       } else {
-        setError("Terjadi kesalahan, silakan coba lagi"); // Tampilkan pesan error umum
+        setError("Terjadi kesalahan, silakan coba lagi");
       }
     }
   };
 
-  const handleEnter = (e) => {
-    if (e.key === "Enter") {
-      handleLogin(e);
-    }
-  };
-  
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center items-center">
@@ -78,11 +72,7 @@ const Login = () => {
           Silakan masukkan email dan password
         </p>
 
-        <form
-          onSubmit={handleLogin}
-          onKeyDown={handleEnter}
-          className="w-full flex flex-col gap-4"
-        >
+        <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
           <div className="flex flex-col">
             <label htmlFor="email" className="text-sm text-gray-600 mb-1">
               Email Address

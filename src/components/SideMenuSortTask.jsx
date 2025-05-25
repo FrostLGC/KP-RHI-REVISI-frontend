@@ -14,6 +14,9 @@ import { toast } from "react-toastify";
 
 const SideMenuSortTask = ({
   isAdmin,
+  isSuperadmin,
+  isHrd,
+  isMyTaskPage,
   onUserSelect,
   onStatusSelect,
   onSortChange,
@@ -35,10 +38,10 @@ const SideMenuSortTask = ({
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin || isSuperadmin || (isHrd && !isMyTaskPage)) {
       fetchUsersWithTasks();
     }
-  }, [isAdmin]);
+  }, [isAdmin, isSuperadmin, isHrd, isMyTaskPage]);
 
   useEffect(() => {
     setSelectedUserId(propSelectedUserId);
@@ -186,7 +189,7 @@ const SideMenuSortTask = ({
             </select>
           </div>
 
-          {isAdmin ? (
+          {(isAdmin || isSuperadmin || (isHrd && !isMyTaskPage)) ? (
             <div>
               <h3 className="text-sm font-semibold mb-2">Users</h3>
               {isLoading ? (

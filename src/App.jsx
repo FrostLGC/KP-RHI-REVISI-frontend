@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -19,11 +19,20 @@ import MyTask from "./pages/User/MyTask";
 import ViewTaskDetails from "./pages/User/ViewTaskDetail";
 import UserTaskAssignmentMailbox from "./pages/User/UserTaskAssignmentMailbox";
 
+import SuperadminDashboard from "./pages/Superadmin/Dashboard";
+import SuperadminManageTasks from "./pages/Superadmin/ManageTasks";
+import SuperadminCreateTask from "./pages/Superadmin/CreateTask";
+import SuperadminManageUsers from "./pages/Superadmin/ManageUsers";
+import SuperadminTaskAssignmentMailbox from "./pages/Superadmin/TaskAssignmentMailbox";
+
+import HrdUserDashboard from "./pages/Hrd/UserDashboard";
+import HrdMyTask from "./pages/Hrd/MyTask";
+import HrdUserTaskAssignmentMailbox from "./pages/Hrd/UserTaskAssignmentMailbox";
+import HrdViewTaskDetail from "./pages/Hrd/ViewTaskDetail";
+
 import PrivateRoute from "./routes/PrivateRoute";
 import UserProvider, { UserContext } from "./context/userContext";
 import { Toaster } from "react-hot-toast";
-
-
 
 const App = () => {
   return (
@@ -34,6 +43,18 @@ const App = () => {
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+
+            {/* Protected Superadmin Routes */}
+            <Route element={<PrivateRoute allowedRoles={["superadmin"]} />}>
+              <Route path="/superadmin/dashboard" element={<SuperadminDashboard />} />
+              <Route path="/superadmin/tasks" element={<SuperadminManageTasks />} />
+              <Route path="/superadmin/create-task" element={<SuperadminCreateTask />} />
+              <Route path="/superadmin/users" element={<SuperadminManageUsers />} />
+              <Route
+                path="/superadmin/task-assignment-mailbox"
+                element={<SuperadminTaskAssignmentMailbox />}
+              />
+            </Route>
 
             {/* Protected Admin Routes */}
             <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
@@ -47,8 +68,26 @@ const App = () => {
               />
             </Route>
 
-            {/* routes user*/}
-            <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
+            {/* Protected HRD Routes */}
+            <Route element={<PrivateRoute allowedRoles={["hrd"]} />}>
+              <Route path="/hrd/dashboard" element={<HrdUserDashboard />} />
+              <Route path="/hrd/tasks" element={<HrdMyTask />} />
+              <Route
+                path="/hrd/tasks-details/:id"
+                element={<HrdViewTaskDetail />}
+              />
+              <Route
+                path="/hrd/task-assignment-mailbox"
+                element={<HrdUserTaskAssignmentMailbox />}
+              />
+              <Route
+                path="/hrd/manage-tasks"
+                element={React.createElement(React.lazy(() => import("./pages/Hrd/ManageTasks")))}
+              />
+            </Route>
+
+            {/* Protected User Routes */}
+            <Route element={<PrivateRoute allowedRoles={["user"]} />}>
               <Route path="/user/dashboard" element={<UserDashboard />} />
               <Route path="/user/tasks" element={<MyTask />} />
               <Route
@@ -65,13 +104,6 @@ const App = () => {
             <Route path="/" element={<Root />} />
           </Routes>
         </Router>
-        {/* <div className="leaflet-custom-attribution" style={{ position: "fixed", bottom: 0, right: 0, padding: "4px", backgroundColor: "white", zIndex: 1000 }}>
-          <svg width="12" height="8" viewBox="0 0 12 8" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: "middle" }}>
-            <rect width="12" height="4" fill="#FF0000" />
-            <rect y="4" width="12" height="4" fill="#FFFFFF" />
-          </svg>
-          <a href="https://leafletjs.com" style={{ marginLeft: "4px" }}>Leaflet</a>
-        </div> */}
       </div>
 
       <Toaster
@@ -86,9 +118,7 @@ const App = () => {
   );
 };
 
-export default App;
-
-const Root = () => {
+function Root() {
   const { user, loading } = useContext(UserContext);
 
   if (loading) return <Outlet />;
@@ -97,5 +127,18 @@ const Root = () => {
     return <Navigate to="/login" />;
   }
 
-  return user.role === "admin" ? <Navigate to="/admin/dashboard" /> : <Navigate to="/user/dashboard" />;
-};
+  switch (user.role) {
+    case "superadmin":
+      return <Navigate to="/superadmin/dashboard" />;
+    case "admin":
+      return <Navigate to="/admin/dashboard" />;
+    case "hrd":
+      return <Navigate to="/hrd/dashboard" />;
+    case "user":
+      return <Navigate to="/user/dashboard" />;
+    default:
+      return <Navigate to="/login" />;
+  }
+}
+
+export default App;
