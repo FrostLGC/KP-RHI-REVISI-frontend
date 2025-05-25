@@ -119,10 +119,10 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
         </div>
 
         <div className="flex jutify-end gap-4 pt-4">
-          <button className="card-btn" onClick={() => setIsModalOpen(false)}>
+          <button className="btn btn-edit-secondary" onClick={() => setIsModalOpen(false)}>
             CANCEL
           </button>
-          <button className="card-btn-fill" onClick={handleAssign}>
+          <button className="btn btn-edit-primary" onClick={handleAssign}>
             DONE
           </button>
         </div>
