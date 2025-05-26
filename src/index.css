@@ -5,7 +5,7 @@
   --font-display: "Poppins", sans-serif;
   --break-points-3xl: 1920px;
   --color-primary: #1368ec;
-  --color-secondary: #4B5563;
+  --color-secondary: #4b5563;
 }
 
 @layer base {
@@ -76,7 +76,7 @@
 /* Add a global placeholder style for any inputs that don't use form-input class */
 input::placeholder,
 textarea::placeholder {
-  color: #4B5563 !important; /* Darker gray */
+  color: #4b5563 !important; /* Darker gray */
   opacity: 1 !important;
   font-weight: 500 !important;
 }
@@ -88,5 +88,3 @@ textarea::placeholder {
 .leaflet-control-attribution {
   font-size: 9px !important;
 }
-
-

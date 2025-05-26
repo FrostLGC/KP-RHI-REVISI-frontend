@@ -13,14 +13,38 @@ const ManageUsers = () => {
   const [profilePhotoInput, setProfilePhotoInput] = useState("");
   const [roleInput, setRoleInput] = useState("");
 
-  const getAllUsers = async () => {
+  const getUsersAndTasks = async () => {
     try {
-      const response = await axiosInstance.get(API_PATH.USERS.GET_ALL_USERS);
-      if (response.data?.length > 0) {
-        setAllUsers(response.data);
+      const [usersRes, tasksRes] = await Promise.all([
+        axiosInstance.get(API_PATH.USERS.GET_ALL_USERS),
+        axiosInstance.get(API_PATH.TASK.USERS_TASKS_GROUPED),
+      ]);
+
+      if (usersRes.data && tasksRes.data && tasksRes.data.users) {
+        // Map tasks by user ID for quick lookup
+        const tasksByUserId = {};
+        tasksRes.data.users.forEach((user) => {
+          tasksByUserId[user._id] = user.tasks || {};
+        });
+
+        // Merge user info with task counts
+        const mergedUsers = usersRes.data.map((user) => {
+          const userTasks = tasksByUserId[user._id] || {};
+          return {
+            ...user,
+            pendingTask: userTasks.Pending ? userTasks.Pending.length : 0,
+            inProgressTask: userTasks["In Progress"] ? userTasks["In Progress"].length : 0,
+            completedTask: userTasks.Completed ? userTasks.Completed.length : 0,
+          };
+        });
+
+        setAllUsers(mergedUsers);
+      } else {
+        throw new Error("Unexpected response format");
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching users and tasks:", error);
+      toast.error("Failed to load users and tasks");
     }
   };
 
@@ -87,15 +111,15 @@ const ManageUsers = () => {
       }
       toast.success("User updated successfully");
       setEditingUser(null);
-      getAllUsers();
+      getUsersAndTasks();
     } catch (error) {
       console.error("Error updating user:", error);
       toast.error("Failed to update user");
     }
   };
 
-  useEffect(() => {
-    getAllUsers();
+  React.useEffect(() => {
+    getUsersAndTasks();
   }, []);
 
   return (
@@ -136,16 +160,6 @@ const ManageUsers = () => {
                   className="form-input mt-1 block w-full"
                 />
               </div>
-              {/* <div className="mt-2">
-                <label className="block text-sm font-medium text-gray-700">Profile Photo URL</label>
-                <input
-                  type="text"
-                  value={editingUser?._id === user._id ? profilePhotoInput : user.profileImageUrl || ""}
-                  onChange={handleProfilePhotoChange}
-                  disabled={editingUser?._id !== user._id}
-                  className="form-input mt-1 block w-full"
-                />
-              </div> */}
               <div className="mt-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Role
@@ -196,4 +210,3 @@ const ManageUsers = () => {
 };
 
 export default ManageUsers;
-
