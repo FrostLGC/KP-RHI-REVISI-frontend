@@ -5,7 +5,7 @@ import { LuUsers } from "react-icons/lu";
 import Modal from "../modal";
 import AvatarGroup from "../AvatarGroup";
 
-const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
+const SelectUsers = ({ selectedUsers, setSelectedUsers, excludeRoles = [] }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [isModaloOpen, setIsModalOpen] = useState(false);
   const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
@@ -14,7 +14,9 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
     try {
       const response = await axiosInstance.get(API_PATH.USERS.GET_ALL_USERS);
       if (response.data?.length > 0) {
-        setAllUsers(response.data);
+        // Filter out users with roles in excludeRoles
+        const filteredUsers = response.data.filter(user => !excludeRoles.includes(user.role));
+        setAllUsers(filteredUsers);
       }
     } catch (error) {
       console.error("Error fetching users:", error);

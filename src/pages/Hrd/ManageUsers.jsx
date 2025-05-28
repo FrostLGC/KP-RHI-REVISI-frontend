@@ -11,7 +11,6 @@ const ManageUsers = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [positionInput, setPositionInput] = useState("");
   const [profilePhotoInput, setProfilePhotoInput] = useState("");
-  const [roleInput, setRoleInput] = useState("");
 
   const getUsersAndTasks = async () => {
     try {
@@ -33,7 +32,9 @@ const ManageUsers = () => {
           return {
             ...user,
             pendingTask: userTasks.Pending ? userTasks.Pending.length : 0,
-            inProgressTask: userTasks["In Progress"] ? userTasks["In Progress"].length : 0,
+            inProgressTask: userTasks["In Progress"]
+              ? userTasks["In Progress"].length
+              : 0,
             completedTask: userTasks.Completed ? userTasks.Completed.length : 0,
           };
         });
@@ -72,7 +73,6 @@ const ManageUsers = () => {
     setEditingUser(user);
     setPositionInput(user.position || "");
     setProfilePhotoInput(user.profileImageUrl || "");
-    setRoleInput(user.role || "");
   };
 
   const handlePositionChange = (e) => {
@@ -83,30 +83,20 @@ const ManageUsers = () => {
     setProfilePhotoInput(e.target.value);
   };
 
-  const handleRoleChange = (e) => {
-    setRoleInput(e.target.value);
-  };
-
   const handleSave = async () => {
     if (!editingUser) return;
 
     try {
       if (positionInput !== editingUser.position) {
         await axiosInstance.put(
-          `${API_PATH.USERS.GET_USER_BY_ID(editingUser._id)}/position`,
+          API_PATH.USERS.UPDATE_POSITION(editingUser._id),
           { position: positionInput }
         );
       }
       if (profilePhotoInput !== editingUser.profileImageUrl) {
         await axiosInstance.put(
-          `${API_PATH.USERS.GET_USER_BY_ID(editingUser._id)}/profile-photo`,
+          API_PATH.USERS.UPDATE_PROFILE_PHOTO(editingUser._id),
           { profileImageUrl: profilePhotoInput }
-        );
-      }
-      if (roleInput !== editingUser.role) {
-        await axiosInstance.put(
-          `${API_PATH.USERS.GET_USER_BY_ID(editingUser._id)}/role`,
-          { role: roleInput }
         );
       }
       toast.success("User updated successfully");
@@ -121,7 +111,7 @@ const ManageUsers = () => {
   React.useEffect(() => {
     getUsersAndTasks();
   }, []);
-
+  
   return (
     <DashboardLayout activeMenu="Team Members">
       <div className="mt-5 mb-10">
@@ -145,39 +135,14 @@ const ManageUsers = () => {
             >
               <UserCard userInfo={user} />
               <div className="mt-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Position
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Position</label>
                 <input
                   type="text"
-                  value={
-                    editingUser?._id === user._id
-                      ? positionInput
-                      : user.position || ""
-                  }
+                  value={editingUser?._id === user._id ? positionInput : user.position || ""}
                   onChange={handlePositionChange}
                   disabled={editingUser?._id !== user._id}
                   className="form-input mt-1 block w-full"
                 />
-              </div>
-              <div className="mt-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Role
-                </label>
-                <select
-                  value={editingUser?._id === user._id ? roleInput : ""}
-                  onChange={handleRoleChange}
-                  disabled={editingUser?._id !== user._id}
-                  className="form-input mt-1 block w-full"
-                >
-                  <option value="" disabled>
-                    Select role
-                  </option>
-                  <option value="superadmin">Superadmin</option>
-                  <option value="admin">Admin</option>
-                  <option value="hrd">HRD</option>
-                  <option value="user">User</option>
-                </select>
               </div>
               {/* <div className="mt-2">
                 <label className="block text-sm font-medium text-gray-700">Profile Photo URL</label>
@@ -189,28 +154,29 @@ const ManageUsers = () => {
                   className="form-input mt-1 block w-full"
                 />
               </div> */}
-              {editingUser?._id === user._id ? (
+              {/* {editingUser?._id === user._id ? (
                 <div className="mt-2 flex space-x-2">
                   <button
-                    className="btn btn-edit-secondary"
+                    className="btn btn-primary"
+                    onClick={handleSave}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="btn btn-secondary"
                     onClick={() => setEditingUser(null)}
                   >
                     Cancel
                   </button>
-                  <button className="btn btn-edit-primary" onClick={handleSave}>
-                    Save
-                  </button>
                 </div>
               ) : (
-                <div className="mt-2 flex space-x-2">
-                  <button
-                    className="btn btn-edit-primary"
-                    onClick={() => handleEditClick(user)}
-                  >
-                    Edit
-                  </button>
-                </div>
-              )}
+                <button
+                  className="btn btn-outline"
+                  onClick={() => handleEditClick(user)}
+                >
+                  Edit
+                </button>
+              )} */}
             </div>
           ))}
         </div>

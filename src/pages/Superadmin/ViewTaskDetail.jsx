@@ -47,6 +47,7 @@ const ViewTaskDetails = () => {
   const updateTodoChecklist = async (index) => {
     if (!task) return;
 
+    // Check if current user is assigned to this task
     const isUserAssigned = task.assignedTo.some(
       (assignedUser) => assignedUser._id === user._id
     );
@@ -97,7 +98,7 @@ const ViewTaskDetails = () => {
   }, [id]);
 
   return (
-    <DashboardLayout activeMenu="My Tasks">
+    <DashboardLayout activeMenu="Manage Tasks">
       <div className="mt-5">
         {task && (
           <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
@@ -166,6 +167,7 @@ const ViewTaskDetails = () => {
                       placeholder="Add a note or describe the problem..."
                       value={item.note || ""}
                       onChange={(e) => {
+                        // Check if current user is assigned to this task
                         const isUserAssigned = task.assignedTo.some(
                           (assignedUser) => assignedUser._id === user._id
                         );
@@ -182,6 +184,7 @@ const ViewTaskDetails = () => {
                         setTask({ ...task, todoChecklist: updatedTodoChecklist });
                       }}
                       onBlur={async (e) => {
+                        // Check if current user is assigned to this task
                         const isUserAssigned = task.assignedTo.some(
                           (assignedUser) => assignedUser._id === user._id
                         );
@@ -255,7 +258,7 @@ const TodoCheckList = ({ text, isChecked, onChange }) => {
         type="checkbox"
         checked={isChecked}
         onChange={onChange}
-        className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded-sm outline-none cursor-pointer"
+        className="w-4 h-4 text-primary bg-gray-100 border border-gray-300 rounded-sm outline-none cursor-pointer"
       />
 
       <p className="text-[13px] text-gray-800">{text}</p>

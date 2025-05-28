@@ -17,6 +17,8 @@ const ManageTasks = () => {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [sortOption, setSortOption] = useState("createdAt_desc");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showChoiceModal, setShowChoiceModal] = useState(false);
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,16 +29,6 @@ const ManageTasks = () => {
     sort = "createdAt_desc",
     search = ""
   ) => {
-    console.log(
-      "Fetching tasks with status:",
-      status,
-      "userId:",
-      userId,
-      "sort:",
-      sort,
-      "search:",
-      search
-    );
     setIsLoading(true);
     try {
       const params = {};
@@ -74,7 +66,6 @@ const ManageTasks = () => {
         }
       });
 
-      console.log("Fetched tasks count:", tasks.length);
       setAllTasks(tasks);
 
       const statusSummary = response.data?.statusSummary || {};
@@ -108,8 +99,23 @@ const ManageTasks = () => {
     );
   }, [selectedUserId, selectedStatus, filterStatus, sortOption, searchTerm]);
 
-  const handleClick = (taskData) => {
-    navigate(`/superadmin/create-task`, { state: { taskId: taskData._id } });
+  const handleTaskCardClick = (taskData) => {
+    setSelectedTask(taskData);
+    setShowChoiceModal(true);
+  };
+
+  const handleViewDetails = () => {
+    if (selectedTask) {
+      navigate(`/superadmin/view-task-detail/${selectedTask._id}`);
+    }
+    setShowChoiceModal(false);
+  };
+
+  const handleUpdateTask = () => {
+    if (selectedTask) {
+      navigate(`/superadmin/create-task`, { state: { taskId: selectedTask._id } });
+    }
+    setShowChoiceModal(false);
   };
 
   const handleDownloadReport = async () => {
@@ -211,11 +217,12 @@ const ManageTasks = () => {
                   createdAt={item.createdAt}
                   dueDate={item.dueDate}
                   assignedTo={item.assignedTo}
+                  assignedBy={item.assignedBy}
                   attachmentCount={item.attachments.length || 0}
                   completedTodoCount={item.completedTodoCount || 0}
                   todoChecklist={item.todoChecklist || []}
                   location={item.location}
-                  onClick={() => handleClick(item)}
+                  onClick={() => handleTaskCardClick(item)}
                 />
               ))
             ) : (
@@ -223,6 +230,32 @@ const ManageTasks = () => {
                 No tasks found matching your criteria
               </div>
             )}
+          </div>
+        )}
+
+        {showChoiceModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-80 max-w-full">
+              <h3 className="text-lg font-semibold mb-4">Choose Action</h3>
+              <button
+                className="w-full mb-3 px-4 py-2 bg-blue-600 text-white rounded"
+                onClick={handleViewDetails}
+              >
+                View Task Details
+              </button>
+              <button
+                className="w-full px-4 py-2 bg-green-600 text-white rounded"
+                onClick={handleUpdateTask}
+              >
+                Update Task
+              </button>
+              <button
+                className="w-full mt-3 px-4 py-2 bg-gray-300 rounded"
+                onClick={() => setShowChoiceModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>

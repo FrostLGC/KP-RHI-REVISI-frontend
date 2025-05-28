@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 const AdminTaskAssignmentMailbox = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [processingRequestId, setProcessingRequestId] = useState(null);
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -44,6 +45,22 @@ const AdminTaskAssignmentMailbox = () => {
     fetchRequests();
   }, []);
 
+  const handleRespond = async (requestId, action) => {
+    setProcessingRequestId(requestId);
+    try {
+      await axiosInstance.put(`${API_PATH.TASK_ASSIGNMENT.RESPOND_TO_REQUEST(requestId)}`, {
+        action,
+      });
+      toast.success(`Request ${action}d successfully`);
+      fetchRequests();
+    } catch (error) {
+      console.error(`Error ${action}ing request`, error);
+      toast.error(`Failed to ${action} request`);
+    } finally {
+      setProcessingRequestId(null);
+    }
+  };
+
   return (
     <DashboardLayout activeMenu="Task Mailbox">
       {loading ? (
@@ -70,6 +87,24 @@ const AdminTaskAssignmentMailbox = () => {
                   <p>
                     Rejection Reason: <em>{req.rejectionReason}</em>
                   </p>
+                )}
+                {req.status === "Pending" && (
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      className="btn btn-primary"
+                      disabled={processingRequestId === req._id}
+                      onClick={() => handleRespond(req._id, "approve")}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      disabled={processingRequestId === req._id}
+                      onClick={() => handleRespond(req._id, "reject")}
+                    >
+                      Reject
+                    </button>
+                  </div>
                 )}
               </li>
             ))}
