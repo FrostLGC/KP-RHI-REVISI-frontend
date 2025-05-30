@@ -569,6 +569,7 @@ const CreateTask = () => {
                   setSelectedUsers={(value) =>
                     handleValueChange("assignedTo", value)
                   }
+                  excludeRoles={["superadmin"]}
                 />
               </div>
             </div>

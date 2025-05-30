@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATH } from "../../utils/apiPath";
@@ -8,8 +8,10 @@ import TaskStatusTabs from "../../components/TaskStatusTabs";
 import TaskCard from "../../components/Cards/TaskCard";
 import { toast } from "react-toastify";
 import { Spinner } from "@heroui/spinner";
+import { UserContext } from "../../context/userContext";
 
 const ManageTasks = () => {
+  const { user } = useContext(UserContext);
   const [allTasks, setAllTasks] = useState([]);
   const [tabs, setTabs] = useState([]);
   const [filterStatus, setFilterStatus] = useState("All");
@@ -234,7 +236,7 @@ const ManageTasks = () => {
         )}
 
         {showChoiceModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-80 max-w-full">
               <h3 className="text-lg font-semibold mb-4">Choose Action</h3>
               <button
@@ -243,12 +245,16 @@ const ManageTasks = () => {
               >
                 View Task Details
               </button>
-              <button
-                className="w-full px-4 py-2 bg-green-600 text-white rounded"
-                onClick={handleUpdateTask}
-              >
-                Update Task
-              </button>
+              {(user?.role === "superadmin" ||
+                (user?.role === "admin" &&
+                  selectedTask?.assignedBy?._id === user?._id)) && (
+                <button
+                  className="w-full px-4 py-2 bg-green-600 text-white rounded"
+                  onClick={handleUpdateTask}
+                >
+                  Update Task
+                </button>
+              )}
               <button
                 className="w-full mt-3 px-4 py-2 bg-gray-300 rounded"
                 onClick={() => setShowChoiceModal(false)}
