@@ -75,7 +75,9 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers, excludeRoles = [] }) => 
               </div>
             ))}
             {selectrdUserAvatars.length > 3 && (
-              <span className="text-sm font-medium">+{selectrdUserAvatars.length - 3}</span>
+              <span className="text-sm font-medium">
+                +{selectrdUserAvatars.length - 3}
+              </span>
             )}
           </div>
         </div>
@@ -88,40 +90,47 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers, excludeRoles = [] }) => 
       >
         <div className="space-y-4 h-[60vh] overflow-y-auto">
           {allUsers.map((user) => (
-          <div
-            key={user._id}
-            className=" flex items-center gap-4 p-3 border-b border-gray-200"
-          >
-            <img
-              src={user.profileImageUrl && user.profileImageUrl.trim() !== "" ? user.profileImageUrl : null}
-              alt={user.name}
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-2">
-                <p className="font-medium text-gray-800 dark:text-white">
-                  {user.name}
-                </p>
-                {user.position && (
-                  <span className="text-green-600 text-xs font-semibold bg-green-100 px-2 py-0.5 rounded-md">
-                    {user.position}
-                  </span>
-                )}
+            <div
+              key={user._id}
+              className=" flex items-center gap-4 p-3 border-b border-gray-200"
+            >
+              <img
+                src={
+                  user.profileImageUrl && user.profileImageUrl.trim() !== ""
+                    ? user.profileImageUrl
+                    : null
+                }
+                alt={user.name}
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="flex-1 flex flex-col">
+                <div className="flex items-center gap-2">
+                  <p className="font-medium text-gray-800 dark:text-white">
+                    {user.name}
+                  </p>
+                  {user.position && (
+                    <span className="text-green-600 text-xs font-semibold bg-green-100 px-2 py-0.5 rounded-md">
+                      {user.position}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[13px] text-gray-500">{user.email}</p>
               </div>
-              <p className="text-[13px] text-gray-500">{user.email}</p>
+              <input
+                type="checkbox"
+                checked={tempSelectedUsers.includes(user._id)}
+                onChange={() => toggleUserSelection(user._id)}
+                className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded-sm outline-none"
+              />
             </div>
-            <input
-              type="checkbox"
-              checked={tempSelectedUsers.includes(user._id)}
-              onChange={() => toggleUserSelection(user._id)}
-              className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded-sm outline-none"
-            />
-          </div>
           ))}
         </div>
 
         <div className="flex jutify-end gap-4 pt-4">
-          <button className="btn btn-edit-secondary" onClick={() => setIsModalOpen(false)}>
+          <button
+            className="btn btn-edit-secondary"
+            onClick={() => setIsModalOpen(false)}
+          >
             CANCEL
           </button>
           <button className="btn btn-edit-primary" onClick={handleAssign}>
