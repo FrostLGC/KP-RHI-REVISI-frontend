@@ -148,6 +148,29 @@ const ViewTaskDetails = () => {
                     maxVisible={5}
                   />
                 </div>
+                <div className="col-span-6 md:col-span-4 mt-4">
+                  <label className="text-xs font-medium text-slate-500">
+                    Updated By
+                  </label>
+                  <div className="flex items-center gap-2 mt-1">
+                    {task?.updatedBy ? (
+                      <>
+                        <img
+                          src={task.updatedBy.profileImageUrl}
+                          alt={task.updatedBy.name}
+                          className="w-6 h-6 rounded-full object-cover"
+                        />
+                        <span className="text-sm font-medium text-gray-700">
+                          {task.updatedBy.name}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-sm text-gray-500">
+                        No updates yet
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="mt-2">
@@ -172,7 +195,9 @@ const ViewTaskDetails = () => {
                           (assignedUser) => assignedUser._id === user._id
                         );
                         if (!isUserAssigned) {
-                          toast.error("You are not authorized to update this todo note.");
+                          toast.error(
+                            "You are not authorized to update this todo note."
+                          );
                           return;
                         }
                         const newNote = e.target.value;
@@ -181,7 +206,10 @@ const ViewTaskDetails = () => {
                           ...updatedTodoChecklist[index],
                           note: newNote,
                         };
-                        setTask({ ...task, todoChecklist: updatedTodoChecklist });
+                        setTask({
+                          ...task,
+                          todoChecklist: updatedTodoChecklist,
+                        });
                       }}
                       onBlur={async (e) => {
                         // Check if current user is assigned to this task
@@ -189,7 +217,9 @@ const ViewTaskDetails = () => {
                           (assignedUser) => assignedUser._id === user._id
                         );
                         if (!isUserAssigned) {
-                          toast.error("You are not authorized to update this todo note.");
+                          toast.error(
+                            "You are not authorized to update this todo note."
+                          );
                           return;
                         }
                         const updatedTodoChecklist = [...task.todoChecklist];
@@ -203,7 +233,9 @@ const ViewTaskDetails = () => {
                           }
                         } catch (error) {
                           console.error("Failed to update todo note", error);
-                          const message = error.response?.data?.message || "Failed to update todo note";
+                          const message =
+                            error.response?.data?.message ||
+                            "Failed to update todo note";
                           toast.error(message);
                         }
                       }}

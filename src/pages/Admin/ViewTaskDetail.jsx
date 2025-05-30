@@ -136,19 +136,40 @@ const ViewTaskDetails = () => {
                   />
                 </div>
                 <div className="col-span-6 md:col-span-4">
-                  <label className="text-xs font-medium text-slate-500">
-                    Assigned To
-                  </label>
+              <label className="text-xs font-medium text-slate-500">
+                Assigned To
+              </label>
 
-                  <AvatarGroup
-                    avatars={
-                      task?.assignedTo.map((item) => item?.profileImageUrl) ||
-                      []
-                    }
-                    maxVisible={5}
-                  />
-                </div>
+              <AvatarGroup
+                avatars={
+                  task?.assignedTo.map((item) => item?.profileImageUrl) ||
+                  []
+                }
+                maxVisible={5}
+              />
+            </div>
+            <div className="col-span-6 md:col-span-4 mt-4">
+              <label className="text-xs font-medium text-slate-500">
+                Updated By
+              </label>
+              <div className="flex items-center gap-2 mt-1">
+                {task?.updatedBy ? (
+                  <>
+                    <img
+                      src={task.updatedBy.profileImageUrl}
+                      alt={task.updatedBy.name}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span className="text-sm font-medium text-gray-700">
+                      {task.updatedBy.name}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-sm text-gray-500">No updates yet</span>
+                )}
               </div>
+            </div>
+          </div>
 
               <div className="mt-2">
                 <label className="text-xs font-medium text-slate-500">
