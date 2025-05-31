@@ -171,6 +171,46 @@ const ViewTaskDetails = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Update History Timeline */}
+                <div className="col-span-6 md:col-span-4 mt-6">
+                  <label className="text-xs font-medium text-slate-500">
+                    Update History Timeline
+                  </label>
+                  <div className="mt-2 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-2 bg-white">
+                    {task?.updateHistory && task.updateHistory.length > 0 ? (
+                      task.updateHistory
+                        .slice()
+                        .reverse()
+                        .map((update, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 py-1 border-b last:border-b-0"
+                          >
+                            <img
+                              src={update.user?.profileImageUrl}
+                              alt={update.user?.name}
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                            <div>
+                              <p className="text-sm font-medium text-gray-700">
+                                {update.user?.name || "Unknown User"}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {update.updatedAt
+                                  ? moment(update.updatedAt).format(
+                                      "DD MMM YYYY, HH:mm:ss"
+                                    )
+                                  : "Unknown Date"}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                    ) : (
+                      <p className="text-xs text-gray-500">No update history available.</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="mt-2">
