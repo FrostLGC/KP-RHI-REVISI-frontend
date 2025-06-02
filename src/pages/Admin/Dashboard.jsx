@@ -73,6 +73,39 @@ const Dashboard = () => {
     return () => {};
   }, []);
 
+  const [showSelector, setShowSelector] = React.useState(false);
+  const [selectedImage, setSelectedImage] = React.useState(null);
+  const { updateUser } = React.useContext(UserContext);
+
+  const handleImageUpload = async () => {
+    if (!selectedImage) {
+      toast.error("Please select an image first");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("image", selectedImage);
+      const uploadRes = await axiosInstance.post("/api/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const imageUrl = uploadRes.data.imageUrl;
+
+      await axiosInstance.put(
+        `${API_PATH.USERS.GET_USER_BY_ID(user._id)}/profile-photo`,
+        {
+          profileImageUrl: imageUrl,
+        }
+      );
+
+      updateUser({ ...user, profileImageUrl: imageUrl });
+      toast.success("Profile picture updated successfully");
+      setShowSelector(false);
+      setSelectedImage(null);
+    } catch (error) {
+      toast.error("Failed to update profile picture");
+    }
+  };
+
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="card my-5">
