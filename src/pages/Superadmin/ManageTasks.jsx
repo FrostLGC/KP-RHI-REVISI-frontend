@@ -234,23 +234,25 @@ const ManageTasks = () => {
         )}
 
         {showChoiceModal && (
-          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-80 max-w-full">
-              <h3 className="text-lg font-semibold mb-4">Choose Action</h3>
+          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 transition-opacity duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-80 max-w-full shadow-xl dark:shadow-2xl border border-gray-200 dark:border-gray-600 animate-in fade-in-0 zoom-in-95 duration-200">
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                Choose Action
+              </h3>
               <button
-                className="w-full mb-3 px-4 py-2 bg-blue-600 text-white rounded"
+                className="w-full mb-3 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-150"
                 onClick={handleViewDetails}
               >
                 View Task Details
               </button>
               <button
-                className="w-full px-4 py-2 bg-green-600 text-white rounded"
+                className="w-full px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-150"
                 onClick={handleUpdateTask}
               >
                 Update Task
               </button>
               <button
-                className="w-full mt-3 px-4 py-2 bg-gray-300 rounded"
+                className="w-full mt-3 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors duration-150"
                 onClick={() => setShowChoiceModal(false)}
               >
                 Cancel
