@@ -4,6 +4,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATH } from "../../utils/apiPath";
 import toast from "react-hot-toast";
 import { LuFileSpreadsheet } from "react-icons/lu";
+import { FaSearch } from "react-icons/fa";
 import UserCard from "../../components/Cards/UserCard";
 
 const ManageUsers = () => {
@@ -11,6 +12,7 @@ const ManageUsers = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [positionInput, setPositionInput] = useState("");
   const [profilePhotoInput, setProfilePhotoInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getUsersAndTasks = async () => {
     try {
@@ -127,24 +129,54 @@ const ManageUsers = () => {
           </button>
         </div>
 
+        <div className="mt-4 w-full max-w-sm">
+          <div className="flex items-center w-full text-sm text-gray-700 bg-white border border-gray-300 rounded-md px-3 py-2 placeholder:text-gray-600 placeholder:font-medium focus-within:outline-none focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 hover:border-blue-400 hover:ring-1 hover:ring-blue-100 transition duration-200">
+            <FaSearch className="text-gray-500 mr-2 flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search users by name or email"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent outline-none border-none focus:outline-none"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          {allUsers?.map((user) => (
-            <div
-              key={user._id}
-              className="border border-gray-400/50 p-3 rounded shadow"
-            >
-              <UserCard userInfo={user} />
-              <div className="mt-2">
-                <label className="block text-sm font-medium text-gray-700">Position</label>
-                <input
-                  type="text"
-                  value={editingUser?._id === user._id ? positionInput : user.position || ""}
-                  onChange={handlePositionChange}
-                  disabled={editingUser?._id !== user._id}
-                  className="form-input mt-1 block w-full"
-                />
-              </div>
-              {/* <div className="mt-2">
+          {allUsers
+            ?.filter(
+              (user) =>
+                user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (user.position &&
+                  user.position
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()))
+            )
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((user) => (
+              <div
+                key={user._id}
+                className="border border-gray-400/50 p-3 rounded shadow"
+              >
+                <UserCard userInfo={user} />
+                <div className="mt-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Position
+                  </label>
+                  <input
+                    type="text"
+                    value={
+                      editingUser?._id === user._id
+                        ? positionInput
+                        : user.position || ""
+                    }
+                    onChange={handlePositionChange}
+                    disabled={editingUser?._id !== user._id}
+                    className="form-input mt-1 block w-full"
+                  />
+                </div>
+                {/* <div className="mt-2">
                 <label className="block text-sm font-medium text-gray-700">Profile Photo URL</label>
                 <input
                   type="text"
@@ -154,7 +186,7 @@ const ManageUsers = () => {
                   className="form-input mt-1 block w-full"
                 />
               </div> */}
-              {/* {editingUser?._id === user._id ? (
+                {/* {editingUser?._id === user._id ? (
                 <div className="mt-2 flex space-x-2">
                   <button
                     className="btn btn-primary"
@@ -177,8 +209,8 @@ const ManageUsers = () => {
                   Edit
                 </button>
               )} */}
-            </div>
-          ))}
+              </div>
+            ))}
         </div>
       </div>
     </DashboardLayout>
