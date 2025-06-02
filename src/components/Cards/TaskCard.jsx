@@ -72,20 +72,30 @@ const TaskCard = ({
     }
   };
 
+  // Handler for map interactions
+  const handleMapInteraction = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <div
       className={`bg-white rounded-xl py-4 shadow-md shadow-gray-100 border cursor-pointer ${
         status === "Rejected"
           ? "border-red-500 bg-red-50"
           : status === "Pending"
-          ? "border-purple-500 bg-purple-50"          
+          ? "border-purple-500 bg-purple-50"
           : status === "Completed"
           ? "border-lime-500 bg-lime-50"
           : status === "Pending Approval"
           ? "border-violet-500 bg-violet-50"
           : "border-cyan-500 bg-cyan-50"
       }`}
-      onClick={onClick}
+      onClick={(e) => {
+        // Only trigger onClick if the click wasn't on the map container
+        if (!e.target.closest(".leaflet-container")) {
+          onClick();
+        }
+      }}
     >
       {/* Header with status and priority */}
       <div className="flex items-end gap-3 px-4">
@@ -149,43 +159,43 @@ const TaskCard = ({
 
         <div className="flex items-center justify-between mt-3">
           <div className="flex flex-col gap-1">
-              <div className="flex flex-col gap-1">
-                {(assignedTo || []).map((user) => (
-                  <div key={user._id} className="flex items-center gap-2">
-                    {user.profileImageUrl ? (
-                      <img
-                        src={user.profileImageUrl}
-                        alt={user.name}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 bg-slate-400 rounded-full flex items-center justify-center text-white text-xs">
-                        {user.name?.charAt(0).toUpperCase() || "?"}
-                      </div>
-                    )}
-                    <div className="text-xs font-medium text-gray-700">
-                      {user.name}
-                      {user.rejected && (
-                        <span className="ml-2 text-red-600 font-semibold">
-                          (Rejected)
-                        </span>
-                      )}
+            <div className="flex flex-col gap-1">
+              {(assignedTo || []).map((user) => (
+                <div key={user._id} className="flex items-center gap-2">
+                  {user.profileImageUrl ? (
+                    <img
+                      src={user.profileImageUrl}
+                      alt={user.name}
+                      className="w-6 h-6 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 bg-slate-400 rounded-full flex items-center justify-center text-white text-xs">
+                      {user.name?.charAt(0).toUpperCase() || "?"}
                     </div>
-                    {user.rejected && user.rejectionReason && (
-                      <div className="text-xs italic text-red-500 ml-6 max-w-xs line-clamp-2">
-                        Reason: {user.rejectionReason}
-                      </div>
-                    )}
-
-                    {/* Show pending status */}
-                    {user.pending && (
-                      <div className="text-xs italic text-blue-600 mt-1 ml-6 max-w-xs line-clamp-2">
-                        Note: Pending approval
-                      </div>
+                  )}
+                  <div className="text-xs font-medium text-gray-700">
+                    {user.name}
+                    {user.rejected && (
+                      <span className="ml-2 text-red-600 font-semibold">
+                        (Rejected)
+                      </span>
                     )}
                   </div>
-                ))}
-              </div>
+                  {user.rejected && user.rejectionReason && (
+                    <div className="text-xs italic text-red-500 ml-6 max-w-xs line-clamp-2">
+                      Reason: {user.rejectionReason}
+                    </div>
+                  )}
+
+                  {/* Show pending status */}
+                  {user.pending && (
+                    <div className="text-xs italic text-blue-600 mt-1 ml-6 max-w-xs line-clamp-2">
+                      Note: Pending approval
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
             {assignedBy && (
               <div className="flex items-center gap-2">
                 {assignedBy.profileImageUrl ? (
@@ -228,12 +238,18 @@ const TaskCard = ({
             </p>
 
             {location.lat && location.lng ? (
-              <div className="h-[250px] w-full rounded border border-gray-300 overflow-hidden relative z-0">
+              <div
+                className="h-[250px] w-full rounded border border-gray-300 overflow-hidden relative z-0"
+                onClick={handleMapInteraction}
+              >
                 <MapContainer
                   center={[location.lat, location.lng]}
                   zoom={15}
                   scrollWheelZoom={false}
                   style={{ height: "100%", width: "100%" }}
+                  onClick={handleMapInteraction}
+                  onDragStart={handleMapInteraction}
+                  onMouseDown={handleMapInteraction}
                 >
                   <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -261,7 +277,10 @@ const TaskCard = ({
           </label>
           <ul className="max-h-40 overflow-y-auto">
             {todoChecklist.map((item, idx) => (
-              <li key={`todo_note_${idx}`} className="mb-1 flex items-start gap-2">
+              <li
+                key={`todo_note_${idx}`}
+                className="mb-1 flex items-start gap-2"
+              >
                 <input
                   type="checkbox"
                   checked={item.completed}
@@ -269,7 +288,11 @@ const TaskCard = ({
                   className="mt-1 w-4 h-4 cursor-default"
                 />
                 <div className="flex flex-col">
-                  <span className={`font-semibold ${item.completed ? "line-through text-gray-500" : ""}`}>
+                  <span
+                    className={`font-semibold ${
+                      item.completed ? "line-through text-gray-500" : ""
+                    }`}
+                  >
                     {item.text}
                   </span>
                   {item.note && item.note.trim() !== "" && (
@@ -288,4 +311,3 @@ const TaskCard = ({
 };
 
 export default TaskCard;
-
