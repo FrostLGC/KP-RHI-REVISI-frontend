@@ -11,7 +11,7 @@ import SelectDropDown from "../../components/Inputs/SelectDropDown";
 import SelectUsers from "../../components/Inputs/SelectUsers";
 import TodoListInput from "../../components/Inputs/TodoListInput";
 import AddAttachmentsInput from "../../components/Inputs/AddAttachmentsInput";
-import Modal from "../../components/modal";
+import Modal from "../../components/ModalUser";
 import DeleteAlert from "../../components/DeleteAlert";
 
 // Import React Leaflet components for map
@@ -87,7 +87,7 @@ const CreateTask = () => {
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
-    priority: "Low",
+    priority: null,
     dueDate: "",
     assignedTo: [],
     todoChecklist: [],
@@ -505,12 +505,12 @@ const CreateTask = () => {
               )}
             </div>
             <div className="mt-4">
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-black-700">
                 Task Title
               </label>
               <input
                 placeholder="Enter Task Title"
-                className="form-input text-sm text-gray-700"
+                className="w-full mt-1 text-sm text-gray-700 bg-white border border-gray-300 rounded-md px-3 py-2 placeholder:text-gray-600 placeholder:font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400 hover:ring-1 hover:ring-blue-100 transition duration-200"
                 value={taskData.title}
                 onChange={({ target }) =>
                   handleValueChange("title", target.value)
@@ -519,12 +519,12 @@ const CreateTask = () => {
             </div>
 
             <div className="mt-3">
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-black-700">
                 Description
               </label>
               <textarea
                 placeholder="Enter Task Description"
-                className="form-input text-sm text-gray-700"
+                className="w-full mt-1 text-sm text-gray-700 bg-white border border-gray-300 rounded-md px-3 py-2 placeholder:text-gray-600 placeholder:font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400 hover:ring-1 hover:ring-blue-100 transition duration-200"
                 rows={4}
                 value={taskData.description}
                 onChange={({ target }) =>
@@ -535,7 +535,7 @@ const CreateTask = () => {
 
             <div className="grid grid-cols-12 gap-4 mt-2">
               <div className="col-span-6 md:col-span-4">
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-black-700">
                   Priority
                 </label>
                 <SelectDropDown
@@ -547,21 +547,36 @@ const CreateTask = () => {
               </div>
 
               <div className="col-span-6 md:col-span-4">
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-black-700">
                   Due Date
                 </label>
                 <input
-                  className="form-input"
                   type="date"
                   value={taskData.dueDate}
                   onChange={({ target }) =>
                     handleValueChange("dueDate", target.value)
                   }
+                  className="w-full mt-1 text-sm text-gray-700 bg-white border border-gray-300 rounded-md px-3 py-2 placeholder:text-gray-600 placeholder:font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400 hover:ring-1 hover:ring-blue-100 transition duration-200 cursor-pointer select-none"
+                  style={{
+                    colorScheme: "light",
+                  }}
+                  onFocus={(e) => {
+                    e.target.showPicker?.();
+                  }}
+                  onClick={(e) => {
+                    e.target.blur(); // Remove focus to prevent text selection
+                    setTimeout(() => {
+                      e.target.showPicker?.();
+                    }, 0);
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent text selection on mouse down
+                  }}
                 />
               </div>
 
               <div className="col-span-12 md:col-span-3">
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-xs font-medium text-black-700">
                   Assign To
                 </label>
                 <SelectUsers
@@ -569,13 +584,13 @@ const CreateTask = () => {
                   setSelectedUsers={(value) =>
                     handleValueChange("assignedTo", value)
                   }
-                  excludeRoles={['superadmin']}
+                  excludeRoles={["superadmin"]}
                 />
               </div>
             </div>
 
             <div className="mt-3">
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-black-700">
                 TODO Checklist
               </label>
               <TodoListInput
@@ -589,7 +604,7 @@ const CreateTask = () => {
             </div>
 
             <div className="mt-3">
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-black-700">
                 Add Attachment
               </label>
               <AddAttachmentsInput
@@ -602,12 +617,12 @@ const CreateTask = () => {
             </div>
 
             <div className="mt-3">
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-xs font-medium text-black-700">
                 Location Address
               </label>
               <div className="flex gap-2">
                 <input
-                  className="form-input flex-grow"
+                  className="w-full mt-1 text-sm text-gray-700 bg-white border border-gray-300 rounded-md px-3 py-2 placeholder:text-gray-600 placeholder:font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-blue-400 hover:ring-1 hover:ring-blue-100 transition duration-200"
                   placeholder="Enter location address"
                   value={taskData.location.address || ""}
                   onChange={({ target }) =>
@@ -642,9 +657,7 @@ const CreateTask = () => {
 
             {/* Added MapContainer and LocationSelector here */}
             <div className="mt-3">
-              <label className="text-xs font-medium text-slate-600">
-                Select Location on Map
-              </label>
+              <label className="text-xs font-medium text-slate-600"></label>
               <div
                 style={{
                   height: "390px",
@@ -677,7 +690,7 @@ const CreateTask = () => {
               <p className="text-xs font-medium text-red-500 mt-5">{error}</p>
             )}
 
-            <div className="flex justify-end mt-7 z-50 relative">
+            <div className="flex justify-end mt-7 relative">
               <button
                 className="add-btn"
                 onClick={handleSubmit}
@@ -728,7 +741,7 @@ const CreateTask = () => {
           <p>Are you sure you want to create a task assigned to these users?</p>
           <div className="flex justify-end gap-3 mt-5">
             <button
-              className="btn btn-secondary px-4 py-1 rounded bg-gray-300"
+              className="btn btn-secondary px-4 py-1 rounded bg-gray-200"
               onClick={() => cancelAssignModal()}
             >
               Cancel

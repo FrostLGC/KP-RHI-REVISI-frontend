@@ -123,7 +123,7 @@ const Signup = () => {
               label="Jabatan (Posisi)"
               value={position}
               onChange={({ target }) => setPosition(target.value)}
-              placeholder="Contoh: HRD, Arsitek, Keuangan"
+              placeholder="Contoh: Staff, HRD, Arsitek, Keuangan"
             />
             <Input
               type="text"

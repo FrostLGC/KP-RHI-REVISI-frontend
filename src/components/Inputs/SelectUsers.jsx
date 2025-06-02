@@ -8,22 +8,54 @@ const SelectUsers = ({
   selectedUsers,
   setSelectedUsers,
   excludeRoles = [],
+  excludeCurrentUser = true, // New prop to control excluding current user
 }) => {
   const [allUsers, setAllUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Get current user info
+  const getCurrentUser = async () => {
+    try {
+      const response = await axiosInstance.get(API_PATH.AUTH.GET_PROFILE);
+      if (response.data) {
+        setCurrentUser(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      // If there's no specific endpoint, try to get from localStorage or other auth storage
+      const userFromStorage =
+        localStorage.getItem("user") || sessionStorage.getItem("user");
+      if (userFromStorage) {
+        try {
+          setCurrentUser(JSON.parse(userFromStorage));
+        } catch (parseError) {
+          console.error("Error parsing user from storage:", parseError);
+        }
+      }
+    }
+  };
 
   const getAllUsers = async () => {
     try {
       const response = await axiosInstance.get(API_PATH.USERS.GET_ALL_USERS);
       if (response.data?.length > 0) {
-        const filteredUsers = response.data
+        let filteredUsers = response.data
           .filter((user) => !excludeRoles.includes(user.role))
           .map((user) => ({
             ...user,
             nameLower: user.name.toLowerCase(),
           }));
+
+        // Exclude current user if excludeCurrentUser is true
+        if (excludeCurrentUser && currentUser) {
+          filteredUsers = filteredUsers.filter(
+            (user) => user._id !== currentUser._id
+          );
+        }
+
         setAllUsers(filteredUsers);
       }
     } catch (error) {
@@ -67,8 +99,14 @@ const SelectUsers = ({
   );
 
   useEffect(() => {
-    getAllUsers();
+    getCurrentUser();
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      getAllUsers();
+    }
+  }, [currentUser, excludeRoles, excludeCurrentUser]);
 
   useEffect(() => {
     setTempSelectedUsers(selectedUsers);
